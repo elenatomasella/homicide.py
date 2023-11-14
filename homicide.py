@@ -1,190 +1,202 @@
+#import libraries
 import pandas as pd
-#import the dataset
-homicide = pd.read_csv("database.csv", low_memory = False)
-homicide_df= pd.DataFrame(homicide)
-#reduction of the dataset
-print(homicide_df.columns)
-homicide_df = homicide_df[['City', 'State', 'Year', 'Month', 'Crime Type', 'Crime Solved', 'Victim Sex', 'Victim Age','Victim Race', 'Perpetrator Sex','Perpetrator Age','Perpetrator Race','Perpetrator Ethnicity', 'Weapon', 'Relationship']]
-homicide_df= homicide_df[homicide_df['State'].isin(['Texas','California'])]
-#specific datasets we extract to get insights via comparisons
-homicide_Texas = homicide_df[homicide_df['State']=='Texas']
-homicide_California =homicide_df[homicide_df['State']=='California']
-homicide_Austin = homicide_df[homicide_df['City']=='Austin']
-homicide_Sacramento = homicide_df[homicide_df['City']=='Sacramento']
-
-print(homicide_df.describe().T)
-homicide_df.info
-#necessary libraries
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-#check for na values in the dataframe
-print(homicide_df.isnull().values.any())
+def plot_victim_age_trend(data, suf):
+    """" Group the data by 'Year' and calculate median """
+    data['Victim Age'] = pd.to_numeric(data['Victim Age'], errors='coerce')
+    grouped_data = data.groupby('Year')['Victim Age'].agg(['median']).reset_index()
+    #.agg is used to use functions on each group identify by groupby
+    plt.plot(grouped_data['Year'], grouped_data['median'], label='Median Age')
+    plt.xlabel('Year')
+    plt.ylabel('Age')
+    plt.title(f'Median Victim Age Through the Years in {suf}')
+    plt.legend()
+    plt.show()
 
-#view the clean dataset -partially
-homicide_df.describe()
-
-#continue data-cleaning
-#for now we have two numerical variables only so we need to convert the other ones properly
-homicide_df.columns
-set(homicide_df['Crime Type'])
-#{'Manslaughter by Negligence', 'Murder or Manslaughter'}
-homicide_df['Crime Type'] = homicide_df['Crime Type'].replace({'Murder or Manslaughter': 1, 'Manslaughter by Negligence': 0})
-#it's not necessary to change the type to interepret the regression eventually
-homicide_df = homicide_df.rename(columns={'Crime Type': 'Crime Type: intentional manslaughter?'})
-
-set(homicide_df['Crime Solved'])
-homicide_df['Crime Solved'] = homicide_df['Crime Solved'].replace({'Yes': 1, 'No': 0})
-homicide_California['Crime Solved'] = homicide_California['Crime Solved'].replace({'Yes': 1, 'No': 0})
-homicide_Texas['Crime Solved'] = homicide_Texas['Crime Solved'].replace({'Yes': 1, 'No': 0})
-#it's not necessary to change the type to interepret the regression eventually
-
-set(homicide_df['Victim Sex'])
-#for now we do not convert into dummies as we want to keep this particular variable as categorical for the EDA
-
-set(homicide_df['Victim Age'])
-#here we have outliers: (age 998) !! We then decided to delete that row
-homicide_df = homicide_df[homicide_df['Victim Age']!= 998]
-plt.figure(figsize=(8, 6))
-homicide_df_sorted = homicide_df.sort_values(by=['Victim Age'])
-sns.lineplot(data=homicide_df, x='Year', y='Victim Age', hue='State', palette=['orchid', 'navy'], marker='x', linestyle = '--')
-plt.title('Victim Age trend')
-plt.show()
-
-set(homicide_California['Perpetrator Sex'])
-#for now we do not convert into dummies as we want to keep this particular variable as categorical for the EDA
-
-set(homicide_California['Perpetrator Age'])
-#outliers 95/05 : per Edo
-homicide_df = homicide_df[homicide_df['Perpetrator Age']!= 0]
-plt.figure(figsize=(8, 6))
-homicide_df_sorted = homicide_df.sort_values(by=['Perpetrator Age'])
-sns.lineplot(data=homicide_df, x='Year', y='Perpetrator Age', hue='State', palette=['orchid', 'navy'], marker='o')
-plt.title('Perpetrator Age trend')
-plt.show()
-
-set(homicide_California['Perpetrator Race'])
-set(homicide_California['Perpetrator Ethnicity'])
-#{'Asian/Pacific Islander', 'White', 'Black', 'Native American/Alaska Native', 'Unknown'}
-
-#PARTE DI EDO: ARMI
-set(homicide_California['Weapon'])
-#{'Drugs', 'Firearm', 'Fire', 'Rifle', 'Explosives', 'Poison', 'Blunt Object', 'Gun', 'Shotgun', 'Unknown', 'Suffocation', 'Drowning', 'Strangulation', 'Knife', 'Handgun'}
-
-#EDA
-#population in Texas and California: extention of the research
-population = pd.read_csv('population_usafacts.csv')
-#population US
-pop = []
-for i in range(1980,2015):
-    pop.append(population[f'{i}'][0])
-#population California
-pop_cal = []
-for i in range(81, 116):
-    pop_cal.append(population.iloc[25, i])
-#population Texas:
-pop_tex = []
-for i in range(81, 116):
-    pop_tex.append(population.iloc[64, i])
-#trend of the population in Texas and California from 2020 to 2014
-plt.plot(range(2000,2015), pop_tex[20:],color = 'navy',linestyle='--' , label = 'Texas')
-plt.plot(range(2000, 2015), pop_cal[20:], color = 'orchid', linestyle ="--" ,label = 'California ')
-plt.title('Population Over Years')
-plt.xlabel('Year')
-plt.ylabel('Population')
-plt.legend()
-plt.show()
-
-#% of homocides in capitals
-len(homicide_Sacramento)/len(homicide_California)
-len(homicide_Austin)/len(homicide_Texas)
+def plot_perpetrator_age_trend(data, suf):
+    data['Perpetrator Age'] = pd.to_numeric(data['Perpetrator Age'], errors='coerce')
+    """" Group the data by 'Year' and calculate median """
+    grouped_data = data.groupby('Year')['Perpetrator Age'].agg(['median']).reset_index()
+    #.agg is used to use functions on each group identify by groupby
+    plt.plot(grouped_data['Year'], grouped_data['median'], label='Median Age')
+    plt.xlabel('Year')
+    plt.ylabel('Age')
+    plt.title(f'Median Perpetrator Age Through the Years in {suf}')
+    plt.legend()
+    plt.show()
 
 #EDA about victim race
-# Victim race distribution overall
-labels = set(homicide_California['Victim Race'])
-colors = ['dimgrey', 'brown', 'snow', 'burlywood', 'turquoise']
-import matplotlib.pyplot as plt
-victim_race_counts = homicide_df['Victim Race'].value_counts()
-plt.pie(victim_race_counts, colors = colors, shadow = True, startangle = 140 )
-plt.title('Victim Race overall distribution')
-plt.legend(title = 'Races', loc = 'lower center',labels = labels)
-plt.show()
-#victim race distribution in California
-victim_race_counts_California = homicide_California['Victim Race'].value_counts()
-plt.pie(victim_race_counts_California, colors=colors, shadow=True, startangle=140)
-plt.title('Victim Race in California')
-plt.legend(title = 'Races', loc = 'lower center', labels = labels)
-plt.show()
-#victim race distribution in Texas
-victim_race_counts_Texas = homicide_Texas['Victim Race'].value_counts()
-plt.pie(victim_race_counts_Texas, colors = colors, shadow = True, startangle=140)
-plt.title('Victim Race in Texas')
-plt.legend(title = 'Races', loc = 'lower center',labels = labels)
-plt.show()
+def plot_victim_race_distribution(data, suf):
+    # Plot the victim race distribution
+    labels = set(data['Victim Race'])
+    colors = ['dimgrey', 'brown', 'snow', 'burlywood', 'turquoise']
+    victim_race_counts = data['Victim Race'].value_counts()
+    plt.pie(victim_race_counts, colors=colors, shadow=True, startangle=140)
+    plt.title(f'Victim Race distribution in {suf}')
+    plt.legend(title='Races', loc='lower center', labels=labels)
+    plt.show()
 
 #EDA about perpetrator race
-# Perpetrator race distribution overall
-perpetrator_race_counts = homicide_df['Perpetrator Race'].value_counts()
-plt.pie(perpetrator_race_counts, colors = colors)
-plt.title('Perpetrator Race overall distribution')
-plt.legend(title = 'Races', loc = 'upper center', labels =labels)
-plt.show()
-#perpetrator race distribution in California
-perpetrator_race_counts_cal = homicide_California['Perpetrator Race'].value_counts()
-plt.pie(perpetrator_race_counts_cal, colors = colors)
-plt.title('Perpetrator Race in California')
-plt.legend(title = 'Races', loc = 'upper center', labels = labels)
-plt.show()
-#perpetrator race distribution in Texas
-perpetrator_race_counts_tex = homicide_Texas['Perpetrator Race'].value_counts()
-plt.pie(perpetrator_race_counts_tex, colors = colors)
-plt.title('Perpetrator Race in Texas')
-plt.legend(title = 'Races', loc = 'upper center', labels = labels)
-plt.show()
+def plot_perpetrator_race(data, suf):
+    # Plot the perpetrator race distribution
+    labels = set(data['Perpetrator Race'])
+    colors = ['dimgrey', 'brown', 'snow', 'burlywood', 'turquoise']
+    perpetrator_race_counts = data['Perpetrator Race'].value_counts()
+    plt.pie(perpetrator_race_counts, colors=colors)
+    plt.title(f'Perpetrator Race distribution in {suf}')
+    plt.legend(title='Races', loc='upper center', labels=labels)
+    plt.show()
+
+def plot_crimes_countries_trend(data):
+    # distribution of crimes through the years: comparison between California and Texas
+    sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, palette=['orchid', 'navy'])
+    plt.title('Crimes count: comparison between California and Texas')
+    plt.legend()
+    plt.show()
+
+def plot_crimes_capitals_trend(data):
+    # distribution of crimes through the years: comparison between Sacramento and Austin
+    sns.histplot(data[(data['City'] == 'Austin') | (data['City'] == 'Sacramento')], x='Year',
+                 hue='City', bins=30, multiple='dodge', shrink=.75, palette=['orchid', 'navy'])
+    plt.title('Crimes count: comparison between capitals')
+    plt.show()
+
+def plot_solved_crimes(data, suf):
+    #percentage of solved crimes through the years
+    solved_crimes = []
+    for i in list(set(data['Year'])):
+        solved_crimes.append(len(data[(data['Year'] == i) & (data['Crime Solved'] == 1)]) / len(data[data['Year'] == i]))
+    plt.plot(range(1980, 2015), solved_crimes, color='peachpuff', label='generic')
+    plt.legend()
+    plt.title(f'Percentage of solved crimes in {suf}')
+    plt.show()
+
+def plot_population_trend(data1,data2):
+    # trend of the population in Texas and California from 2020 to 2014
+    plt.plot(range(2000, 2015), data1[20:], color='navy', linestyle='--', label='Texas')
+    plt.plot(range(2000, 2015), data2[20:], color='orchid', linestyle="--", label='California ')
+    plt.title('Population Over Years')
+    plt.xlabel('Year')
+    plt.ylabel('Population')
+    plt.legend()
+    plt.show()
 
 
-#distribution of crimes through the years: comparison between California and Texas
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.histplot(homicide_df, x = 'Year', hue = 'State', bins = 35,  multiple='dodge', shrink=.75, palette = ['orchid','navy'])
-plt.figure(figsize=(8, 6))
-plt.show()
-#distribution of crimes through the years: comparison between capitals
-sns.histplot(homicide_df[(homicide_df['City']=='Austin') | (homicide_df['City']=='Sacramento')], x = 'Year', hue = 'City', bins = 30,  multiple='dodge', shrink=.75)
-plt.figure(figsize=(8, 6))
-plt.title('Crimes count')
-plt.show()
+
+def main():
+    # import the dataset
+    homicide = pd.read_csv("database.csv", low_memory=False)
+    #convert the dataset to dataframe class
+    homicide_df = pd.DataFrame(homicide)
+
+    #overview
+    print(homicide_df.describe().T)
+    homicide_df.info
+    print(homicide_df.columns)
+    # check for na values in the dataframe
+    print(homicide_df.isnull().values.any())
+
+    #maintain some columns only: we're not interested to keep them all for our purposes
+    homicide_df = homicide_df[['City', 'State', 'Year', 'Month', 'Crime Type', 'Crime Solved', 'Victim Sex', 'Victim Age', 'Victim Race',
+         'Perpetrator Sex', 'Perpetrator Age', 'Perpetrator Race', 'Perpetrator Ethnicity', 'Weapon', 'Relationship']]
+
+    #we want to investigate the subset of observations concerning California and Texas so we will keep those rows only
+    homicide_df = homicide_df[homicide_df['State'].isin(['Texas', 'California'])]
+    # specific datasets we extract to get insights via comparisons
+    homicide_Texas = homicide_df[homicide_df['State'] == 'Texas']
+    homicide_California = homicide_df[homicide_df['State'] == 'California']
+    homicide_Austin = homicide_df[homicide_df['City'] == 'Austin']
+    homicide_Sacramento = homicide_df[homicide_df['City'] == 'Sacramento']
+
+    #still: data cleaning
+    # we have two numerical variables. We want to convert the other ones properly, if we need so for EDA.
+
+    #crime type
+    set(homicide_df['Crime Type'])
+    # {'Manslaughter by Negligence', 'Murder or Manslaughter'}
+    homicide_df['Crime Type'] = homicide_df['Crime Type'].replace({'Murder or Manslaughter': 1, 'Manslaughter by Negligence': 0})
+    #we rename the column to get at a glance the interpretation of the numerical values we now have throughout the rows
+    homicide_df = homicide_df.rename(columns={'Crime Type': 'Crime Type: intentional manslaughter?'})
+
+    #crime solved
+    set(homicide_df['Crime Solved'])
+    #{'Yes','No'}
+    homicide_df['Crime Solved'] = homicide_df['Crime Solved'].replace({'Yes': 1, 'No': 0})
+    homicide_California['Crime Solved'] = homicide_California['Crime Solved'].replace({'Yes': 1, 'No': 0})
+    homicide_Texas['Crime Solved'] = homicide_Texas['Crime Solved'].replace({'Yes': 1, 'No': 0})
+
+    #victim sex: we want to keep it as categorical for the EDA
+    set(homicide_df['Victim Sex'])
+
+    #perpetrator sex: we want to keep it as categorical for the EDA
+    set(homicide_California['Perpetrator Sex'])
+
+    #victim age: outliers findings
+    set(homicide_df['Victim Age'])
+    # here we have outliers: (age 998) !! We then decided to delete that row
+    homicide_df = homicide_df[homicide_df['Victim Age'] != 998]
+
+    #perpetrator age
+    set(homicide_California['Perpetrator Age'])
+    # outliers 95/05 : per Edo
+    homicide_df = homicide_df[homicide_df['Perpetrator Age'] != 0]
+
+    #perpetrator race
+    set(homicide_California['Perpetrator Race'])
+    # {'Asian/Pacific Islander', 'White', 'Black', 'Native American/Alaska Native', 'Unknown'}
+
+    #perpetrator ethnicity
+    set(homicide_California['Perpetrator Ethnicity'])
+    # {'Asian/Pacific Islander', 'White', 'Black', 'Native American/Alaska Native', 'Unknown'}
 
 
-#percentage of solved crimes through the years
-solved_crimes = []
-for i in list(set(homicide_df['Year'])):
-    solved_crimes.append(len(homicide_df[(homicide_df['Year']==i) &(homicide_df['Crime Solved']==1)])/len(homicide_df[homicide_df['Year']==i]))
-solved_crimes_cal = []
-for i in list(set(homicide_California['Year'])):
-    solved_crimes_cal.append(len(homicide_California
-                             [(homicide_California
-                                          ['Year']==i) &(homicide_California['Crime Solved']==1)])/len(homicide_California[homicide_California['Year']==i]))
-solved_crimes_tex = []
-for i in list(set(homicide_Texas['Year'])):
-    solved_crimes_tex.append(len(homicide_Texas
-                             [(homicide_Texas
-                                          ['Year']==i) &(homicide_Texas['Crime Solved']==1)])/len(homicide_Texas[homicide_Texas['Year']==i]))
-plt.plot(range(1980,2015), solved_crimes, color = 'peachpuff', label = 'generic')
-plt.plot(range(1980,2015), solved_crimes_cal, color = 'orchid',label = 'California' )
-plt.plot(range(1980,2015), solved_crimes_tex, color = 'navy', label = 'Texas')
-plt.legend()
-plt.show()
+    # population in Texas and California: extention of the research
+    population = pd.read_csv('population_usafacts.csv')
+
+    # population US
+    pop = []
+    for i in range(1980, 2015):
+        pop.append(population[f'{i}'][0])
+
+    # population California
+    pop_cal = []
+    for i in range(81, 116):
+        pop_cal.append(population.iloc[25, i])
+
+    # population Texas:
+    pop_tex = []
+    for i in range(81, 116):
+        pop_tex.append(population.iloc[64, i])
+
+    plot_victim_age_trend(homicide_df, 'Total')
+    plot_victim_age_trend(homicide_California, 'California')
+    plot_victim_age_trend(homicide_Texas, 'Texas')
+
+    plot_perpetrator_age_trend(homicide_df,'Total')
+    plot_perpetrator_age_trend(homicide_California, 'California')
+    plot_perpetrator_age_trend(homicide_Texas,'Texas')
+
+    plot_victim_race_distribution(homicide_df, 'Total')
+    plot_victim_race_distribution(homicide_California, 'California')
+    plot_victim_race_distribution(homicide_Texas, 'Texas')
+
+    plot_perpetrator_race(homicide_df, 'Total')
+    plot_perpetrator_race(homicide_California, 'California')
+    plot_perpetrator_race(homicide_Texas, 'Texas')
+
+    # % of homocides in capitals
+    print(f'Be aware the proportion oh homicides in the capital city in respect to the entire country is very different bewteen California and Texas.',
+          "The % is indeed {len(homicide_Sacramento) / len(homicide_California)} for California, while it's {len(homicide_Austin) / len(homicide_Texas)} for Texas")
+    plot_population_trend(pop_tex,pop_cal)
+    plot_crimes_countries_trend(homicide_df)
+    plot_crimes_capitals_trend(homicide_df)
+
+    plot_solved_crimes(homicide_df, 'Total')
+    plot_solved_crimes(homicide_California, 'California')
+    plot_solved_crimes(homicide_Texas, 'Texas')
 
 
-#DATA ANALYSIS
-#does the perpetrator age affect the amount on unsolved crimes? NOT WORKING HERE!!
-plt.figure(figsize=(8, 6))
-homicide_df = homicide_df[homicide_df['Perpetrator Age']!=0]
-homicide_df.groupby('Perpetrator Age')
-sns.countplot(x='Perpetrator Age', hue='Crime Solved', data=homicide_df, palette=['lightgreen', 'salmon'])
-plt.title('Distribution of Solved and Unsolved Crimes by Perpetrator Age')
-plt.xlabel('Perpetrator Age')
-plt.ylabel('Count')
-plt.legend(['solved', 'unsolved'])
-plt.show()
+if __name__ == "__main__":
+    main()
