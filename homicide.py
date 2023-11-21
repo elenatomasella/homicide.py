@@ -4,83 +4,179 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def plot_victim_age_trend(data, suf):
-    """" Group the data by 'Year' and calculate median """
+    """" Group the data by 'Year' and calculate mean """
+    # Convert 'Victim Age' to numeric
     data['Victim Age'] = pd.to_numeric(data['Victim Age'], errors='coerce')
-    grouped_data = data.groupby('Year')['Victim Age'].agg(['median']).reset_index()
+    # Group data by 'Year' and calculate median
+    grouped_data = data.groupby('Year')['Victim Age'].agg(['mean']).reset_index()
     #.agg is used to use functions on each group identify by groupby
-    plt.plot(grouped_data['Year'], grouped_data['median'], label='Median Age')
-    plt.xlabel('Year')
-    plt.ylabel('Age')
-    plt.title(f'Median Victim Age Through the Years in {suf}')
-    plt.legend()
+    plt.plot(grouped_data['Year'], grouped_data['mean'],  marker='o', linestyle='-', color='orchid',label='Average Age')
+    #adding labels and title
+    plt.xlabel('year', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.ylabel('age',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.title(f'Victim Age Through the Years in {suf}',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    # Adding grid lines
+    plt.grid(True, linestyle='--', alpha=0.7, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
     plt.show()
 
 def plot_perpetrator_age_trend(data, suf):
     data['Perpetrator Age'] = pd.to_numeric(data['Perpetrator Age'], errors='coerce')
-    """" Group the data by 'Year' and calculate median """
-    grouped_data = data.groupby('Year')['Perpetrator Age'].agg(['median']).reset_index()
+    """" Group the data by 'Year' and calculate mean """
+    grouped_data = data.groupby('Year')['Perpetrator Age'].agg(['mean']).reset_index()
     #.agg is used to use functions on each group identify by groupby
-    plt.plot(grouped_data['Year'], grouped_data['median'], label='Median Age')
-    plt.xlabel('Year')
-    plt.ylabel('Age')
-    plt.title(f'Median Perpetrator Age Through the Years in {suf}')
-    plt.legend()
+    plt.plot(grouped_data['Year'], grouped_data['mean'], marker='o', linestyle='-', color='seagreen',label='Average Age')
+    #adding labels and title
+    plt.xlabel('year', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.ylabel('age',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.title(f'Perpetrator Age Through the Years in {suf}',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    # Adding grid lines
+    plt.grid(True, linestyle='--', alpha=0.7, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
     plt.show()
 
 #EDA about victim race
 def plot_victim_race_distribution(data, suf):
     # Plot the victim race distribution
-    labels = set(data['Victim Race'])
-    colors = ['dimgrey', 'brown', 'snow', 'burlywood', 'turquoise']
+    labels = list(set(data['Victim Race']))
+    colors = sns.color_palette('PiYG')
     victim_race_counts = data['Victim Race'].value_counts()
-    plt.pie(victim_race_counts, colors=colors, shadow=True, startangle=140)
-    plt.title(f'Victim Race distribution in {suf}')
-    plt.legend(title='Races', loc='lower center', labels=labels)
+    plt.pie(victim_race_counts, colors=colors, startangle=140)
+    #label title and legend
+    plt.title(f'Victim Race distribution in {suf}', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    plt.legend(loc='center', labels=labels, labelcolor= 'navy')
+    #I want a dont plot instead of a simple pie
+    plt.gca().add_artist(plt.Circle((0,0),0.7, color='white'))
+    #show the plot
     plt.show()
 
 #EDA about perpetrator race
 def plot_perpetrator_race(data, suf):
     # Plot the perpetrator race distribution
-    labels = set(data['Perpetrator Race'])
-    colors = ['dimgrey', 'brown', 'snow', 'burlywood', 'turquoise']
+    labels = list(set(data['Perpetrator Race']))
+    colors = sns.color_palette('Spectral')
     perpetrator_race_counts = data['Perpetrator Race'].value_counts()
     plt.pie(perpetrator_race_counts, colors=colors)
-    plt.title(f'Perpetrator Race distribution in {suf}')
-    plt.legend(title='Races', loc='upper center', labels=labels)
+    #label title and legend
+    plt.title(f'Perpetrator Race distribution in {suf}', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    plt.legend(loc='center', labels=labels, labelcolor= 'navy')
+    #I want a donut plot instead of a simple pie chart
+    plt.gca().add_artist(plt.Circle((0,0),0.7, color='white'))
+    #show the plot
     plt.show()
-
+    
+#EDA about amount of crimes through years
 def plot_crimes_countries_trend(data):
     # distribution of crimes through the years: comparison between California and Texas
-    sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, palette=['orchid', 'navy'])
-    plt.title('Crimes count: comparison between California and Texas')
-    plt.legend()
+    sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, palette=['orchid', 'navy'], kde=True)
+    plt.title('Crimes count: comparison between California and Texas', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    # Adding grid lines
+    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
     plt.show()
 
+#EDA about amount of crimes in capitals through years
 def plot_crimes_capitals_trend(data):
     # distribution of crimes through the years: comparison between Sacramento and Austin
     sns.histplot(data[(data['City'] == 'Austin') | (data['City'] == 'Sacramento')], x='Year',
-                 hue='City', bins=30, multiple='dodge', shrink=.75, palette=['orchid', 'navy'])
-    plt.title('Crimes count: comparison between capitals')
+                 hue='City', bins=30, multiple='dodge', shrink=.75, palette=['orchid', 'navy'], kde=True)
+    plt.title('Crimes count: comparison between capitals',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    # Adding grid lines
+    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
     plt.show()
 
+#EDA about the percentage of crime solved
 def plot_solved_crimes(data, suf):
     #percentage of solved crimes through the years
     solved_crimes = []
     for i in list(set(data['Year'])):
         solved_crimes.append(len(data[(data['Year'] == i) & (data['Crime Solved'] == 1)]) / len(data[data['Year'] == i]))
-    plt.plot(range(1980, 2015), solved_crimes, color='peachpuff', label='generic')
-    plt.legend()
-    plt.title(f'Percentage of solved crimes in {suf}')
+    plt.plot(range(1980, 2015), solved_crimes, color='mediumblue', label=f'{suf}')
+    # Adding grid lines
+    plt.grid(True, linestyle='-', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #add title
+    plt.title(f'Percentage of solved crimes in {suf}', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    #show the plot
     plt.show()
 
+#EDA on a addicted dataset to interpret the contenxt
 def plot_population_trend(data1,data2):
     # trend of the population in Texas and California from 2020 to 2014
-    plt.plot(range(2000, 2015), data1[20:], color='navy', linestyle='--', label='Texas')
-    plt.plot(range(2000, 2015), data2[20:], color='orchid', linestyle="--", label='California ')
-    plt.title('Population Over Years')
-    plt.xlabel('Year')
-    plt.ylabel('Population')
+    plt.plot(range(2000, 2015), data1[20:], color='navy', linestyle='-', label='Texas')
+    plt.plot(range(2000, 2015), data2[20:], color='orchid', linestyle="-", label='California ')
+    plt.title('Population Over Years', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    plt.xlabel('Year', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.ylabel('Population', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':12})
+    plt.grid(True, linestyle='--', alpha=0.3, color = 'navy')
     plt.legend()
+    #show the plot
     plt.show()
 
 
