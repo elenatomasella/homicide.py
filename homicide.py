@@ -3,14 +3,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def plot_victim_age_trend(data, suf):
+def plot_victim_age_trend(data1, data2, data3, suf1,suf2,suf3):
     """" Group the data by 'Year' and calculate mean """
-    # Convert 'Victim Age' to numeric
-    data['Victim Age'] = pd.to_numeric(data['Victim Age'], errors='coerce')
-    # Group data by 'Year' and calculate median
-    grouped_data = data.groupby('Year')['Victim Age'].agg(['mean']).reset_index()
-    #.agg is used to use functions on each group identify by groupby
-    plt.plot(grouped_data['Year'], grouped_data['mean'],  marker='o', linestyle='-', color='orchid',label='Average Age')
+    i, colors = 0, ['orchid', 'mediumaquamarine','cornflowerblue']
+    for (data,suf) in [(data1,suf1),(data2,suf2),(data3,suf3)]:
+        # Convert 'Victim Age' to numeric
+        data['Victim Age'] = pd.to_numeric(data['Victim Age'], errors='coerce')
+        # Group data by 'Year' and calculate median
+        grouped_data = data.groupby('Year')['Victim Age'].agg(['mean']).reset_index()
+        #.agg is used to use functions on each group identify by groupby
+        plt.plot(grouped_data['Year'], grouped_data['mean'],  marker='o', linestyle='-', color=colors[i],label=f'Average Age in {suf}')
+        i+=1
     #adding labels and title
     plt.xlabel('year', fontdict={'family':'sans',
                                                'style':'normal',
@@ -22,11 +25,12 @@ def plot_victim_age_trend(data, suf):
                                                'color':'navy',
                                                'weight':'normal',
                                                'size':12})
-    plt.title(f'Victim Age Through the Years in {suf}',fontdict={'family':'sans',
+    plt.title(f'Victim Age Through the Years',fontdict={'family':'sans',
                                                'style':'normal',
                                                'color':'navy',
                                                'weight':'normal',
                                                'size':14})
+    
     # Adding grid lines
     plt.grid(True, linestyle='--', alpha=0.7, color = 'navy')
     #add a legend
@@ -34,12 +38,15 @@ def plot_victim_age_trend(data, suf):
     #show the plot
     plt.show()
 
-def plot_perpetrator_age_trend(data, suf):
-    data['Perpetrator Age'] = pd.to_numeric(data['Perpetrator Age'], errors='coerce')
-    """" Group the data by 'Year' and calculate mean """
-    grouped_data = data.groupby('Year')['Perpetrator Age'].agg(['mean']).reset_index()
-    #.agg is used to use functions on each group identify by groupby
-    plt.plot(grouped_data['Year'], grouped_data['mean'], marker='o', linestyle='-', color='seagreen',label='Average Age')
+def plot_perpetrator_age_trend(data1,data2,data3, suf1,suf2,suf3):
+    i, colors = 0, ['orchid', 'mediumaquamarine','cornflowerblue']
+    for (data,suf) in [(data1,suf1),(data2,suf2),(data3,suf3)]:
+        data['Perpetrator Age'] = pd.to_numeric(data['Perpetrator Age'], errors='coerce')
+        """" Group the data by 'Year' and calculate mean """
+        grouped_data = data.groupby('Year')['Perpetrator Age'].agg(['mean']).reset_index()
+        #.agg is used to use functions on each group identify by groupby
+        plt.plot(grouped_data['Year'], grouped_data['mean'], marker='o', linestyle='-', color=colors[i],label=f'Average Age in {suf}')
+        i+=1
     #adding labels and title
     plt.xlabel('year', fontdict={'family':'sans',
                                                'style':'normal',
@@ -64,7 +71,7 @@ def plot_perpetrator_age_trend(data, suf):
     plt.show()
 
 #EDA about victim race
-def plot_victim_race_distribution(data, suf):
+def plot_victim_race(data, suf):
     # Plot the victim race distribution
     labels = list(set(data['Victim Race']))
     colors = sns.color_palette('PiYG')
@@ -96,65 +103,11 @@ def plot_perpetrator_race(data, suf):
                                                'weight':'normal',
                                                'size':14})
     plt.legend(loc='center', labels=labels, labelcolor= 'navy')
-    #I want a donut plot instead of a simple pie chart
+    #I want a dont plot instead of a simple pie
     plt.gca().add_artist(plt.Circle((0,0),0.7, color='white'))
     #show the plot
     plt.show()
-    
-#EDA about amount of crimes through years
-def plot_crimes_countries_trend(data):
-    # distribution of crimes through the years: comparison between California and Texas
-    sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, palette=['orchid', 'navy'], kde=True)
-    plt.title('Crimes count: comparison between California and Texas', fontdict={'family':'sans',
-                                               'style':'normal',
-                                               'color':'navy',
-                                               'weight':'normal',
-                                               'size':14})
-    # Adding grid lines
-    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
-    #add a legend
-    plt.legend(labelcolor = 'navy')
-    #show the plot
-    plt.show()
 
-#EDA about amount of crimes in capitals through years
-def plot_crimes_capitals_trend(data):
-    # distribution of crimes through the years: comparison between Sacramento and Austin
-    sns.histplot(data[(data['City'] == 'Austin') | (data['City'] == 'Sacramento')], x='Year',
-                 hue='City', bins=30, multiple='dodge', shrink=.75, palette=['orchid', 'navy'], kde=True)
-    plt.title('Crimes count: comparison between capitals',fontdict={'family':'sans',
-                                               'style':'normal',
-                                               'color':'navy',
-                                               'weight':'normal',
-                                               'size':14})
-    # Adding grid lines
-    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
-    #add a legend
-    plt.legend(labelcolor = 'navy')
-    #show the plot
-    plt.show()
-
-#EDA about the percentage of crime solved
-def plot_solved_crimes(data, suf):
-    #percentage of solved crimes through the years
-    solved_crimes = []
-    for i in list(set(data['Year'])):
-        solved_crimes.append(len(data[(data['Year'] == i) & (data['Crime Solved'] == 1)]) / len(data[data['Year'] == i]))
-    plt.plot(range(1980, 2015), solved_crimes, color='mediumblue', label=f'{suf}')
-    # Adding grid lines
-    plt.grid(True, linestyle='-', alpha=0.3, color = 'navy')
-    #add a legend
-    plt.legend(labelcolor = 'navy')
-    #add title
-    plt.title(f'Percentage of solved crimes in {suf}', fontdict={'family':'sans',
-                                               'style':'normal',
-                                               'color':'navy',
-                                               'weight':'normal',
-                                               'size':14})
-    #show the plot
-    plt.show()
-
-#EDA on a addicted dataset to interpret the contenxt
 def plot_population_trend(data1,data2):
     # trend of the population in Texas and California from 2020 to 2014
     plt.plot(range(2000, 2015), data1[20:], color='navy', linestyle='-', label='Texas')
@@ -179,6 +132,66 @@ def plot_population_trend(data1,data2):
     #show the plot
     plt.show()
 
+def plot_crimes_countries_trend(data1,data2,suf1,suf2):
+    i,colors,countries = 0,['mediumaquamarine','cornflowerblue'], [suf1,suf2]
+    for data in [data1,data2]:
+        # distribution of crimes through the years: comparison between California and Texas
+        sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = countries[i])
+        plt.title('Crimes count: comparison between California and Texas', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+        i +=1
+    # Adding grid lines
+    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
+    plt.show()
+
+def plot_crimes_capitals_trend(data1,data2,suf1,suf2):
+    # distribution of crimes through the years: comparison between Sacramento and Austin
+    i,colors,place = 0,['mediumaquamarine','cornflowerblue'], [suf1,suf2]
+    for data in [data1,data2]:
+        sns.histplot(data, x='Year',
+                 hue='City', bins=30, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = place[i])
+        plt.title('Crimes count: comparison between capitals',fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+        i+=1
+    
+    # Adding grid lines
+    plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #show the plot
+    plt.show()
+
+
+def plot_solved_crimes(data1,data2,data3, suf1,suf2,suf3):
+    #percentage of solved crimes through the years
+    i,colors,place = 0,['seagreen','mediumaquamarine','cornflowerblue'], [suf1,suf2,suf3]
+    for data in [data1,data2,data3]:
+        solved_crimes = []
+        for j in range(1980, 2015):
+             solved_crimes.append(len(data[(data['Year'] == j) & (data['Crime Solved'] == 1)]) / len(data[data['Year'] == j]))
+        plt.plot(range(1980, 2015), solved_crimes, color=colors[i], label=f'{place[i]}')
+        i+=1
+    # Adding grid lines
+    plt.grid(True, linestyle='-', alpha=0.3, color = 'navy')
+    #add a legend
+    plt.legend(labelcolor = 'navy')
+    #add title
+    plt.title(f'Percentage of solved crimes', fontdict={'family':'sans',
+                                               'style':'normal',
+                                               'color':'navy',
+                                               'weight':'normal',
+                                               'size':14})
+    #show the plot
+    plt.show()
 
 
 def main():
@@ -198,8 +211,6 @@ def main():
     homicide_df = homicide_df[['City', 'State', 'Year', 'Month', 'Crime Type', 'Crime Solved', 'Victim Sex', 'Victim Age', 'Victim Race',
          'Perpetrator Sex', 'Perpetrator Age', 'Perpetrator Race', 'Perpetrator Ethnicity', 'Weapon', 'Relationship']]
 
-    #we want to investigate the subset of observations concerning California and Texas so we will keep those rows only
-    homicide_df = homicide_df[homicide_df['State'].isin(['Texas', 'California'])]
     # specific datasets we extract to get insights via comparisons
     homicide_Texas = homicide_df[homicide_df['State'] == 'Texas']
     homicide_California = homicide_df[homicide_df['State'] == 'California']
@@ -266,17 +277,13 @@ def main():
     for i in range(81, 116):
         pop_tex.append(population.iloc[64, i])
 
-    plot_victim_age_trend(homicide_df, 'Total')
-    plot_victim_age_trend(homicide_California, 'California')
-    plot_victim_age_trend(homicide_Texas, 'Texas')
+    plot_victim_age_trend(homicide_df,homicide_California,homicide_Texas, 'US','California', 'Texas')
 
-    plot_perpetrator_age_trend(homicide_df,'Total')
-    plot_perpetrator_age_trend(homicide_California, 'California')
-    plot_perpetrator_age_trend(homicide_Texas,'Texas')
+    plot_perpetrator_age_trend(homicide_df,homicide_California,homicide_Texas, 'US', 'California', 'Texas')
 
-    plot_victim_race_distribution(homicide_df, 'Total')
-    plot_victim_race_distribution(homicide_California, 'California')
-    plot_victim_race_distribution(homicide_Texas, 'Texas')
+    plot_victim_race(homicide_df, 'Total')
+    plot_victim_race(homicide_California, 'California')
+    plot_victim_race(homicide_Texas, 'Texas')
 
     plot_perpetrator_race(homicide_df, 'Total')
     plot_perpetrator_race(homicide_California, 'California')
@@ -286,12 +293,10 @@ def main():
     print(f'Be aware the proportion oh homicides in the capital city in respect to the entire country is very different bewteen California and Texas.',
           "The % is indeed {len(homicide_Sacramento) / len(homicide_California)} for California, while it's {len(homicide_Austin) / len(homicide_Texas)} for Texas")
     plot_population_trend(pop_tex,pop_cal)
-    plot_crimes_countries_trend(homicide_df)
-    plot_crimes_capitals_trend(homicide_df)
+    plot_crimes_countries_trend(homicide_California,homicide_Texas,'California','Texas')
+    plot_crimes_capitals_trend(homicide_Sacramento,homicide_Austin,'Sacramento','Austin')
 
-    plot_solved_crimes(homicide_df, 'Total')
-    plot_solved_crimes(homicide_California, 'California')
-    plot_solved_crimes(homicide_Texas, 'Texas')
+    plot_solved_crimes(homicide_df, homicide_California,homicide_Texas,'US','California','Texas')
 
 
 if __name__ == "__main__":
