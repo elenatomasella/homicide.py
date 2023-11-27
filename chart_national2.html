@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300, "strokeWidth": 0}, "axis": {"gridColor": "lightgray", "labelColor": "navy", "labelFont": "sans", "labelFontSize": 14, "titleColor": "navy", "titleFont": "sans", "titleFontSize": 14}, "title": {"color": "navy", "font": "sans", "fontSize": 14}}, "data": {"name": "data-d8d6e5dab07a2b80d9a082057f8f1458"}, "mark": {"type": "bar", "cornerRadius": 3}, "encoding": {"color": {"field": "Weapon", "scale": {"domain": ["Handgun", "Knife", "Blunt Object", "Firearm", "Unknown", "Shotgun", "Rifle", "Strangulation", "Fire", "Suffocation", "Gun", "Drugs", "Drowning", "Explosives", "Poison", "Fall"], "range": ["#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51", "#D62828", "#023E8A", "#0077B6", "#0096C7", "#48CAE4", "#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51", "#D62828"]}, "type": "nominal"}, "x": {"axis": {"grid": false}, "field": "Weapon", "sort": "-y", "title": "Weapon", "type": "nominal"}, "y": {"axis": {"grid": true}, "field": "Total Victim Count", "title": "Total Victim Count", "type": "quantitative"}}, "height": 400, "title": "Deadliest Weapons Based on Victim Count in USA", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.15.1.json", "datasets": {"data-d8d6e5dab07a2b80d9a082057f8f1458": [{"Weapon": "Blunt Object", "Total Victim Count": 2970}, {"Weapon": "Drowning", "Total Victim Count": 204}, {"Weapon": "Drugs", "Total Victim Count": 160}, {"Weapon": "Explosives", "Total Victim Count": 1786}, {"Weapon": "Fall", "Total Victim Count": 8}, {"Weapon": "Fire", "Total Victim Count": 7997}, {"Weapon": "Firearm", "Total Victim Count": 6359}, {"Weapon": "Gun", "Total Victim Count": 500}, {"Weapon": "Handgun", "Total Victim Count": 37169}, {"Weapon": "Knife", "Total Victim Count": 6636}, {"Weapon": "Poison", "Total Victim Count": 264}, {"Weapon": "Rifle", "Total Victim Count": 5355}, {"Weapon": "Shotgun", "Total Victim Count": 4438}, {"Weapon": "Strangulation", "Total Victim Count": 678}, {"Weapon": "Suffocation", "Total Victim Count": 824}, {"Weapon": "Unknown", "Total Victim Count": 3395}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

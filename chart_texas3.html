@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelColor": "navy", "labelFont": "sans", "labelFontSize": 14, "titleColor": "navy", "titleFont": "sans", "titleFontSize": 14}, "title": {"color": "navy", "font": "sans", "fontSize": 14}}, "data": {"name": "data-5377ecb96e1c1e4f863c27c48bcbef00"}, "mark": {"type": "bar"}, "encoding": {"color": {"field": "Weapon", "scale": {"domain": ["Handgun", "Knife", "Blunt Object", "Firearm", "Unknown", "Shotgun", "Rifle", "Strangulation", "Fire", "Suffocation", "Gun", "Drugs", "Drowning", "Explosives", "Poison", "Fall"], "range": ["#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51", "#D62828", "#023E8A", "#0077B6", "#0096C7", "#48CAE4", "#264653", "#2A9D8F", "#E9C46A", "#F4A261", "#E76F51", "#D62828"]}, "type": "nominal"}, "tooltip": [{"field": "Weapon", "type": "nominal"}, {"field": "Count", "type": "quantitative"}], "x": {"field": "Perpetrator Race", "type": "nominal"}, "y": {"field": "Count", "type": "quantitative"}}, "height": 500, "params": [{"name": "param_2", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales"}], "title": "Preferred Weapon by Race in Texas", "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v5.15.1.json", "datasets": {"data-5377ecb96e1c1e4f863c27c48bcbef00": [{"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Blunt Object", "Count": 23}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Drowning", "Count": 1}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Drugs", "Count": 1}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Fire", "Count": 4}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Firearm", "Count": 24}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Handgun", "Count": 313}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Knife", "Count": 70}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Rifle", "Count": 23}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Shotgun", "Count": 19}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Suffocation", "Count": 4}, {"Perpetrator Race": "Asian/Pacific Islander", "Weapon": "Unknown", "Count": 5}, {"Perpetrator Race": "Black", "Weapon": "Blunt Object", "Count": 1514}, {"Perpetrator Race": "Black", "Weapon": "Drowning", "Count": 31}, {"Perpetrator Race": "Black", "Weapon": "Drugs", "Count": 8}, {"Perpetrator Race": "Black", "Weapon": "Explosives", "Count": 2}, {"Perpetrator Race": "Black", "Weapon": "Fall", "Count": 4}, {"Perpetrator Race": "Black", "Weapon": "Fire", "Count": 83}, {"Perpetrator Race": "Black", "Weapon": "Firearm", "Count": 905}, {"Perpetrator Race": "Black", "Weapon": "Gun", "Count": 12}, {"Perpetrator Race": "Black", "Weapon": "Handgun", "Count": 9734}, {"Perpetrator Race": "Black", "Weapon": "Knife", "Count": 2657}, {"Perpetrator Race": "Black", "Weapon": "Poison", "Count": 2}, {"Perpetrator Race": "Black", "Weapon": "Rifle", "Count": 624}, {"Perpetrator Race": "Black", "Weapon": "Shotgun", "Count": 1143}, {"Perpetrator Race": "Black", "Weapon": "Strangulation", "Count": 113}, {"Perpetrator Race": "Black", "Weapon": "Suffocation", "Count": 62}, {"Perpetrator Race": "Black", "Weapon": "Unknown", "Count": 340}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Blunt Object", "Count": 11}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Handgun", "Count": 16}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Knife", "Count": 8}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Rifle", "Count": 1}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Shotgun", "Count": 2}, {"Perpetrator Race": "Native American/Alaska Native", "Weapon": "Unknown", "Count": 1}, {"Perpetrator Race": "Unknown", "Weapon": "Blunt Object", "Count": 1446}, {"Perpetrator Race": "Unknown", "Weapon": "Drowning", "Count": 24}, {"Perpetrator Race": "Unknown", "Weapon": "Drugs", "Count": 11}, {"Perpetrator Race": "Unknown", "Weapon": "Explosives", "Count": 6}, {"Perpetrator Race": "Unknown", "Weapon": "Fire", "Count": 105}, {"Perpetrator Race": "Unknown", "Weapon": "Firearm", "Count": 2529}, {"Perpetrator Race": "Unknown", "Weapon": "Gun", "Count": 75}, {"Perpetrator Race": "Unknown", "Weapon": "Handgun", "Count": 6186}, {"Perpetrator Race": "Unknown", "Weapon": "Knife", "Count": 2039}, {"Perpetrator Race": "Unknown", "Weapon": "Poison", "Count": 5}, {"Perpetrator Race": "Unknown", "Weapon": "Rifle", "Count": 277}, {"Perpetrator Race": "Unknown", "Weapon": "Shotgun", "Count": 489}, {"Perpetrator Race": "Unknown", "Weapon": "Strangulation", "Count": 377}, {"Perpetrator Race": "Unknown", "Weapon": "Suffocation", "Count": 58}, {"Perpetrator Race": "Unknown", "Weapon": "Unknown", "Count": 1437}, {"Perpetrator Race": "White", "Weapon": "Blunt Object", "Count": 3223}, {"Perpetrator Race": "White", "Weapon": "Drowning", "Count": 68}, {"Perpetrator Race": "White", "Weapon": "Drugs", "Count": 63}, {"Perpetrator Race": "White", "Weapon": "Explosives", "Count": 9}, {"Perpetrator Race": "White", "Weapon": "Fall", "Count": 7}, {"Perpetrator Race": "White", "Weapon": "Fire", "Count": 114}, {"Perpetrator Race": "White", "Weapon": "Firearm", "Count": 1707}, {"Perpetrator Race": "White", "Weapon": "Gun", "Count": 21}, {"Perpetrator Race": "White", "Weapon": "Handgun", "Count": 13594}, {"Perpetrator Race": "White", "Weapon": "Knife", "Count": 4882}, {"Perpetrator Race": "White", "Weapon": "Poison", "Count": 18}, {"Perpetrator Race": "White", "Weapon": "Rifle", "Count": 1788}, {"Perpetrator Race": "White", "Weapon": "Shotgun", "Count": 2211}, {"Perpetrator Race": "White", "Weapon": "Strangulation", "Count": 308}, {"Perpetrator Race": "White", "Weapon": "Suffocation", "Count": 166}, {"Perpetrator Race": "White", "Weapon": "Unknown", "Count": 1092}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
