@@ -1,7 +1,9 @@
+#highlight about the dataset: for a single perpretrator there are multiple rows whenever he/she has committed more than a crime. 
 #import libraries
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import tabulate as tbl
 
 def plot_victim_age_trend(data1, data2, data3, suf1,suf2,suf3):
     """" Group the data by 'Year' and calculate mean """
@@ -71,30 +73,45 @@ def plot_perpetrator_age_trend(data1,data2,data3, suf1,suf2,suf3):
     plt.show()
 
 #EDA about victim race
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 def plot_victim_race(data, suf):
     # Plot the victim race distribution
-    labels = list(set(data['Victim Race']))
-    colors = sns.color_palette('PiYG')
-    victim_race_counts = data['Victim Race'].value_counts()
-    plt.pie(victim_race_counts, colors=colors, startangle=140)
-    #label title and legend
-    plt.title(f'Victim Race distribution in {suf}', fontdict={'family':'sans',
-                                               'style':'normal',
-                                               'color':'navy',
-                                               'weight':'normal',
-                                               'size':14})
-    plt.legend(loc='center', labels=labels, labelcolor= 'navy')
-    #I want a dont plot instead of a simple pie
-    plt.gca().add_artist(plt.Circle((0,0),0.7, color='white'))
-    #show the plot
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    palettes = ['BuPu', 'YlGn']    
+    for i, data1 in enumerate([data, data[data['Victim Race'] != 'Unknown']]):
+        colors = sns.color_palette(palettes[i])
+        victim_race_counts = data1['Victim Race'].value_counts()
+        total_victims = len(data1)
+        percentages = victim_race_counts / total_victims * 100  # Calculate percentages
+        labels = victim_race_counts.index
+        axs[i].pie(victim_race_counts, colors=colors, startangle=140)
+        # Draw a white circle in the center for a "donut" chart effect
+        axs[i].add_artist(plt.Circle((0, 0), 0.4, color='white'))
+        # Create a legend inside the pie chart with percentages
+        legend_labels = [f'{label}: {count} ({percentage:.1f}%)' for label, count, percentage in zip(labels, victim_race_counts, percentages)]
+        legend = axs[i].legend(legend_labels, title="Legend", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), labelcolor='navy')
+        legend.get_title().set_color('navy')
+    # Label title for the entire subplot
+    axs[0].set_title('Considering unknown race', color='navy')
+    axs[1].set_title('Dropping unknown race', color='navy')
+    fig.suptitle(f'Victim Race distribution in {suf}', fontdict={'family':'sans',
+                                                                 'style':'normal',
+                                                                 'color':'navy',
+                                                                 'weight':'normal',
+                                                                 'size':14})
+    # Adjust layout to prevent overlapping
+    plt.tight_layout()
+    # Show the plot
     plt.show()
 
 #EDA about perpetrator race
 def plot_perpetrator_race(data, suf):
     # Plot the perpetrator race distribution
-    labels = list(set(data['Perpetrator Race']))
     colors = sns.color_palette('Spectral')
     perpetrator_race_counts = data['Perpetrator Race'].value_counts()
+    labels = perpetrator_race_counts.index
     plt.pie(perpetrator_race_counts, colors=colors)
     #label title and legend
     plt.title(f'Perpetrator Race distribution in {suf}', fontdict={'family':'sans',
@@ -108,10 +125,25 @@ def plot_perpetrator_race(data, suf):
     #show the plot
     plt.show()
 
+    #----------------------------------#
+    #for the canvas presentation I've also used a code for bar plot:
+    #def plot_perpetrator_race_bar(data, suf):
+    # Plot the perpetrator race distribution using a bar plot
+    #colors = sns.color_palette('Spectral')
+    #perpetrator_race_counts = data['Perpetrator Race'].value_counts()
+    #labels = perpetrator_race_counts.index
+    
+    # Create a bar plot
+    #plt.figure(figsize=(10, 6))
+    #sns.barplot(x=perpetrator_race_counts.index, y=perpetrator_race_counts, palette=colors)
+    #and customizied as above
+
+
+
 def plot_population_trend(data1,data2):
     # trend of the population in Texas and California from 2020 to 2014
-    plt.plot(range(2000, 2015), data1[20:], color='navy', linestyle='-', label='Texas')
-    plt.plot(range(2000, 2015), data2[20:], color='orchid', linestyle="-", label='California ')
+    plt.plot(range(2000, 2015), data1[20:], color='seagreen', linestyle='-', label='Texas')
+    plt.plot(range(2000, 2015), data2[20:], color='olive', linestyle="-", label='California ')
     plt.title('Population Over Years', fontdict={'family':'sans',
                                                'style':'normal',
                                                'color':'navy',
@@ -133,16 +165,17 @@ def plot_population_trend(data1,data2):
     plt.show()
 
 def plot_crimes_countries_trend(data1,data2,suf1,suf2):
-    i,colors,countries = 0,['mediumaquamarine','cornflowerblue'], [suf1,suf2]
-    for data in [data1,data2]:
+    i,colors, data,suf = 0,['olive','seagreen'], [data1,data2], [suf1,suf2]
+    while i<2:
         # distribution of crimes through the years: comparison between California and Texas
-        sns.histplot(data, x='Year', hue='State', bins=35, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = countries[i])
-        plt.title('Crimes count: comparison between California and Texas', fontdict={'family':'sans',
+        sns.histplot(data[i], x='Year', bins=35, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = suf[i])
+        i +=1
+    #add a title
+    plt.title('Crimes count: comparison between California and Texas', fontdict={'family':'sans',
                                                'style':'normal',
                                                'color':'navy',
                                                'weight':'normal',
                                                'size':14})
-        i +=1
     # Adding grid lines
     plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
     #add a legend
@@ -150,19 +183,30 @@ def plot_crimes_countries_trend(data1,data2,suf1,suf2):
     #show the plot
     plt.show()
 
+def crimes_months(data,suf):
+    import plotly.express as px
+    month = data['Month'].value_counts()
+    plt.bar(x=month.index,
+            height=month, color= sns.color_palette('RdBu', 12))
+    plt.xlabel('months')
+    plt.xticks(rotation = 90)
+    plt.title(f'Count Of Homicide Cases Over The Months in {suf}', color = 'navy')
+    for i, value in enumerate(month):
+        plt.annotate(str(value), (i, value), ha='center', va='bottom', fontsize=6, color='navy')
+    plt.show()
+
 def plot_crimes_capitals_trend(data1,data2,suf1,suf2):
     # distribution of crimes through the years: comparison between Sacramento and Austin
-    i,colors,place = 0,['mediumaquamarine','cornflowerblue'], [suf1,suf2]
-    for data in [data1,data2]:
-        sns.histplot(data, x='Year',
-                 hue='City', bins=30, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = place[i])
-        plt.title('Crimes count: comparison between capitals',fontdict={'family':'sans',
+    i,colors= 0,['olive','seagreen']
+    for (data,suf) in [(data1,suf1),(data2,suf2)]:
+        sns.histplot(data, x='Year', bins=30, multiple='dodge', shrink=.75, color=colors[i], kde=True, label = f'{suf}')
+        i+=1
+    #add a title
+    plt.title('Crimes count: comparison between capitals',fontdict={'family':'sans',
                                                'style':'normal',
                                                'color':'navy',
                                                'weight':'normal',
                                                'size':14})
-        i+=1
-    
     # Adding grid lines
     plt.grid(True, linestyle='dotted', alpha=0.3, color = 'navy')
     #add a legend
@@ -206,6 +250,8 @@ def main():
     print(homicide_df.columns)
     # check for na values in the dataframe
     print(homicide_df.isnull().values.any())
+    col_info = [(col, dtype) for col, dtype in zip(homicide_df.columns, homicide_df.dtypes)]
+    print(tbl.tabulate(col_info, headers=['Variable', 'Class'], tablefmt='pretty'))
 
     #maintain some columns only: we're not interested to keep them all for our purposes
     homicide_df = homicide_df[['City', 'State', 'Year', 'Month', 'Crime Type', 'Crime Solved', 'Victim Sex', 'Victim Age', 'Victim Race',
@@ -277,27 +323,43 @@ def main():
     for i in range(81, 116):
         pop_tex.append(population.iloc[64, i])
 
+    
+    plot_population_trend(pop_tex,pop_cal)
+    print(homicide_df['Victim Race'].value_counts())
+    print(homicide_df['Perpetrator Race'].value_counts())
+    print(homicide_California['Victim Race'].value_counts())
+    print(homicide_California['Perpetrator Race'].value_counts())
+    print(homicide_Texas['Victim Race'].value_counts())
+    print(homicide_Texas['Perpetrator Race'].value_counts())   
+    print(homicide_df[homicide_df['Victim Race']=='Unknown'].shape[0]/homicide_df.shape[0])
+    print(homicide_df[homicide_df['Perpetrator Race']=='Unknown'].shape[0]/homicide_df.shape[0])
+    
+    plot_victim_race(homicide_df, 'Total')
+    plot_perpetrator_race(homicide_df, 'Total')
+    plot_perpetrator_race(homicide_df[homicide_df['Perpetrator Race']!= 'Unknown'], 'Total without Unknown')
+    
+    for state in ['California','Texas']:
+        plot_perpetrator_race(homicide_df[homicide_df['State'] == state],state)
+    for state in ['California','Texas']:
+        plot_perpetrator_race(homicide_df[(homicide_df['State'] == state) & (homicide_df['Perpetrator Race']!= 'Unknown')],f'{state} but without unknown')
+    
+    #to write a different code, let's plot the victim race pie for all the states 
+    for state in ['California','Texas']:
+        plot_victim_race(homicide_df[homicide_df['State'] == state],state)
+
     plot_victim_age_trend(homicide_df,homicide_California,homicide_Texas, 'US','California', 'Texas')
 
     plot_perpetrator_age_trend(homicide_df,homicide_California,homicide_Texas, 'US', 'California', 'Texas')
 
-    plot_victim_race(homicide_df, 'Total')
-    plot_victim_race(homicide_California, 'California')
-    plot_victim_race(homicide_Texas, 'Texas')
-
-    plot_perpetrator_race(homicide_df, 'Total')
-    plot_perpetrator_race(homicide_California, 'California')
-    plot_perpetrator_race(homicide_Texas, 'Texas')
-
     # % of homocides in capitals
-    print(f'Be aware the proportion oh homicides in the capital city in respect to the entire country is very different bewteen California and Texas.',
-          "The % is indeed {len(homicide_Sacramento) / len(homicide_California)} for California, while it's {len(homicide_Austin) / len(homicide_Texas)} for Texas")
-    plot_population_trend(pop_tex,pop_cal)
+    print(f'Be aware the proportion of homicides in the capital city in respect to the entire country is very different bewteen California and Texas.',
+          f"The % is indeed {len(homicide_Sacramento) / len(homicide_California)} for California, while it's {len(homicide_Austin) / len(homicide_Texas)} for Texas")
     plot_crimes_countries_trend(homicide_California,homicide_Texas,'California','Texas')
     plot_crimes_capitals_trend(homicide_Sacramento,homicide_Austin,'Sacramento','Austin')
 
     plot_solved_crimes(homicide_df, homicide_California,homicide_Texas,'US','California','Texas')
-
+    for (data,suf) in [(homicide_df,'US'),(homicide_California,'California'),(homicide_Texas,'Texas')]:
+        crimes_months(data, suf)
 
 if __name__ == "__main__":
     main()
